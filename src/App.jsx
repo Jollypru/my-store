@@ -2,6 +2,7 @@ import { Rating } from "@smastrom/react-rating";
 import { useEffect, useState } from "react";
 import { IoCart, IoSearch } from "react-icons/io5";
 import '@smastrom/react-rating/style.css'
+import Footer from "./components/Footer";
 
 function App() {
   const [cartCount, setCartCount] = useState(0);
@@ -10,10 +11,12 @@ function App() {
   const [categories, setCategories] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [search, setSearch] = useState('');
+  const [quantity, setQuantity] = useState(1);
 
   const addToCart = () => {
-    setCartCount(cartCount + 1);
-  }
+    setCartCount(cartCount + quantity);
+    setQuantity(1);
+  };
 
   useEffect(() => {
     fetch('https://fakestoreapi.com/products')
@@ -48,10 +51,19 @@ function App() {
     }
   }
 
+  const incrementQuantity =() => {
+    setQuantity(quantity + 1);
+  }
+  const decrementQuantity = () => {
+    if(quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  }
+
   return (
     <div>
       <nav className="sticky top-0 z-50 flex justify-between items-center p-3 md:px-8 bg-amber-300">
-        <h1 className="text-2xl">MyStore</h1>
+        <h1 className="text-2xl font-bold">MyStore</h1>
         <div className="flex items-center gap-3">
           <div className="relative w-60">
             <input onChange={handleSearch} type="text" placeholder="What are you looking for?" list="category-list" className="border rounded-lg px-4 py-2 w-full" />
@@ -71,7 +83,7 @@ function App() {
       </nav>
 
       {/* Products section */}
-      <section className="px-8">
+      <section className="px-8 my-10">
         <h2 className="text-3xl font-semibold my-5">Our Products</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {
@@ -80,9 +92,9 @@ function App() {
                 <div className="h-[200px] w-[200px] mx-auto">
                   <img className="h-full w-full" src={product.image} alt="" />
                 </div>
-                <h2 className="text-2xl font-semibold truncate mt-2">{product.title}</h2>
+                <h2 className="text-2xl font-semibold truncate mt-4">{product.title.length > 30 ? product.title.slice(0, 30) + "..." : product.title}</h2>
                 <div className="flex items-center">
-                  <p className="mr-8">${product.price}</p>
+                  <p className="mr-8 text-amber-700">${product.price}</p>
                   <Rating style={{ maxWidth: 80 }} value={product.rating.rate} readOnly></Rating>
                   <span>({product.rating.count})</span>
                 </div>
@@ -96,10 +108,10 @@ function App() {
       {
         selectedProduct && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-50 z-50 flex items-center justify-center">
-            <div className="relative w-3/4 p-6 bg-white overflow-y-auto max-h-[90vh]">
+            <div className="relative mx-3 md:w-3/4 p-6 bg-white overflow-y-auto max-h-[90vh]">
               <button onClick={closeModal} className="absolute top-2 right-4 text-2xl">&times;</button>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="h-[400px] w-[400px] border rounded-md shadow-lg">
+              <div className="grid grid-cols-1 lg:grid-cols-2 justify-items-center gap-3">
+                <div className="md:h-[400px] md:w-[500px] lg:w-[400px] border rounded-md shadow-lg">
                   <img className="h-full w-full object-fit" src={selectedProduct.image} alt="" />
                 </div>
                 <div className="space-y-2">
@@ -112,10 +124,10 @@ function App() {
                   <p>{selectedProduct.description}</p>
                   <div className="divider"></div>
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-8 border py-2 px-5 text-lg">
-                      <button>-</button>
-                      <span>1</span>
-                      <button>+</button>
+                    <div className="flex items-center gap-8 border border-gray-400 py-2 px-5 text-lg">
+                      <button onClick={decrementQuantity}>-</button>
+                      <span>{quantity}</span>
+                      <button onClick={incrementQuantity}>+</button>
                     </div>
                     <button onClick={addToCart} className="py-2 px-4 bg-amber-700 text-white text-lg">Add to cart</button>
                   </div>
@@ -125,6 +137,8 @@ function App() {
           </div>
         )
       }
+
+      <Footer></Footer>
     </div>
   )
 }
