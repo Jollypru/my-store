@@ -6,6 +6,10 @@ import '@smastrom/react-rating/style.css'
 function App() {
   const [cartCount, setCartCount] = useState(0);
   const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [search, setSearch] = useState('');
 
   const addToCart = () => {
     setCartCount(cartCount + 1);
@@ -14,8 +18,35 @@ function App() {
   useEffect(() => {
     fetch('https://fakestoreapi.com/products')
       .then(res => res.json())
-      .then(data => setProducts(data))
+      .then(data => {
+        setProducts(data);
+        setAllProducts(data)
+      })
+
+    fetch('https://fakestoreapi.com/products/categories')
+      .then(res => res.json())
+      .then(data => setCategories(data))
   }, [])
+
+  const openProductModal = (productId) => {
+    fetch(`https://fakestoreapi.com/products/${productId}`)
+      .then(res => res.json())
+      .then(data => setSelectedProduct(data))
+  };
+  const closeModal = () => {
+    setSelectedProduct(null);
+  }
+
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+    if (e.target.value) {
+      fetch(`https://fakestoreapi.com/products/category/${e.target.value}`)
+        .then(res => res.json())
+        .then(data => setProducts(data))
+    } else {
+      setProducts(allProducts);
+    }
+  }
 
   return (
     <div>
@@ -23,8 +54,15 @@ function App() {
         <h1 className="text-2xl">MyStore</h1>
         <div className="flex items-center gap-3">
           <div className="relative w-60">
-            <input type="text" placeholder="What are you looking for?" className="border rounded-lg px-4 py-2 w-full" />
+            <input onChange={handleSearch} type="text" placeholder="What are you looking for?" list="category-list" className="border rounded-lg px-4 py-2 w-full" />
             <IoSearch className="absolute right-3 top-1/2 transform -translate-y-2 text-gray-400 text-xl"></IoSearch>
+            <datalist id="category-list">
+              {
+                categories.map((category, index) => (
+                  <option key={index} value={category}></option>
+                ))
+              }
+            </datalist>
           </div>
           <button className="text-2xl relative"><IoCart />
             <span className="absolute -top-2 -right-2 bg-[#db7137] text-white text-xs px-1 rounded-full">{cartCount}</span>
@@ -38,7 +76,7 @@ function App() {
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {
             products.map(product => (
-              <div key={product.id} className="border p-5 shadow-lg rounded-md">
+              <div key={product.id} onClick={() => openProductModal(product.id)} className="border p-5 shadow-lg rounded-md cursor-pointer">
                 <div className="h-[200px] w-[200px] mx-auto">
                   <img className="h-full w-full" src={product.image} alt="" />
                 </div>
@@ -53,6 +91,40 @@ function App() {
           }
         </div>
       </section>
+
+      {/* product detail modal */}
+      {
+        selectedProduct && (
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-50 z-50 flex items-center justify-center">
+            <div className="relative w-3/4 p-6 bg-white overflow-y-auto max-h-[90vh]">
+              <button onClick={closeModal} className="absolute top-2 right-4 text-2xl">&times;</button>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="h-[400px] w-[400px] border rounded-md shadow-lg">
+                  <img className="h-full w-full object-fit" src={selectedProduct.image} alt="" />
+                </div>
+                <div className="space-y-2">
+                  <h2 className="text-3xl font-semibold">{selectedProduct.title}</h2>
+                  <div className="flex items-center text-lg">
+                    <Rating style={{ maxWidth: 80 }} value={selectedProduct.rating.rate} readOnly></Rating>
+                    <span>({selectedProduct.rating.count})</span>
+                  </div>
+                  <p className="text-3xl">${selectedProduct.price}</p>
+                  <p>{selectedProduct.description}</p>
+                  <div className="divider"></div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-8 border py-2 px-5 text-lg">
+                      <button>-</button>
+                      <span>1</span>
+                      <button>+</button>
+                    </div>
+                    <button onClick={addToCart} className="py-2 px-4 bg-amber-700 text-white text-lg">Add to cart</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
     </div>
   )
 }
