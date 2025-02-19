@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { IoCart, IoSearch } from "react-icons/io5";
 import '@smastrom/react-rating/style.css'
 import Footer from "./components/Footer";
+import Banner from "./components/Banner";
 
 function App() {
   const [cartCount, setCartCount] = useState(0);
@@ -62,7 +63,7 @@ function App() {
 
   return (
     <div>
-      <nav className="sticky top-0 z-50 flex justify-between items-center p-3 md:px-8 bg-amber-300">
+      <nav className="sticky top-0 z-50 flex justify-between items-center p-3 md:px-8 bg-amber-400">
         <h1 className="text-2xl font-bold">MyStore</h1>
         <div className="flex items-center gap-3">
           <div className="relative w-60">
@@ -82,9 +83,20 @@ function App() {
         </div>
       </nav>
 
+      <Banner></Banner>
+
+      <section className="bg-black px-10 py-20 text-white">
+        <h2 className="text-4xl mb-3">Discover Your Next Favorite Item</h2>
+        <p>Browse our exclusive products and find the perfect product tailored just for you.</p>
+        <div className="flex gap-5 mt-8">
+          <button className="py-2 px-3 border hover:bg-white hover:text-black font-semibold">Shop</button>
+          <button className="py-2 px-3 border hover:bg-white hover:text-black font-semibold">Learn More</button>
+        </div>
+      </section>
+
       {/* Products section */}
       <section className="px-8 my-10">
-        <h2 className="text-3xl font-semibold my-5">Our Products</h2>
+        <h2 className="text-4xl font-semibold my-5">Our Products</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {
             products.map(product => (
