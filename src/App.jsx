@@ -4,6 +4,7 @@ import { IoCart, IoSearch } from "react-icons/io5";
 import '@smastrom/react-rating/style.css'
 import Footer from "./components/Footer";
 import Banner from "./components/Banner";
+import Services from "./components/Services";
 
 function App() {
   const [cartCount, setCartCount] = useState(0);
@@ -149,7 +150,7 @@ function App() {
           </div>
         )
       }
-
+      <Services></Services>
       <Footer></Footer>
     </div>
   )
