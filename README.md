@@ -27,7 +27,7 @@ cd react-ecommerce-ui
 ## 🎨 Design Decisions
 * **Minimalistic UI:** Focused on a clean and modern look.
 
-* **Responsiveness:** Used Tailwind’s grid system to ensure mobile-friendliness.
+* **Responsiveness:** Used Tailwind’s grid system to ensure mobile, tablet, laptop-friendliness.
 
 * **API Handling:** Used Fetch API to dynamically load categories and products.
 
@@ -47,3 +47,6 @@ cd react-ecommerce-ui
 * Improve the UI with animations and transitions.
 
 * Implement a backend for storing cart data.
+
+## 🌐 Live Demo
+[Live Preview](https://my-store-gules-seven.vercel.app)
